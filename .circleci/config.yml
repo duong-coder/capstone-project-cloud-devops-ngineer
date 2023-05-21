@@ -33,38 +33,11 @@ jobs:
           key: backend-build
   deploy:
     docker:
-      - image: python:3.9.16
+      - image: amazon/aws-cli
     steps:
       - checkout
       - attach_workspace:
           at: ~/
-      - setup_remote_docker:
-          version: 20.10.11
-      - run:
-          name: install dependencies
-          command: |
-            apk add docker-cli
-            docker --version
-
-            apt-get update -y
-            apt-get install awscli -y
-      - run:
-          name: docker build
-          command: |
-            cd backend
-            docker build --tag capstone-project .
-            docker image list
-      - run:
-          name: docker push
-          command: |
-            export DOCKER_PATH=$DOCKER_PATH
-            export DOCKER_PASS=$DOCKER_PASS
-            echo "Docker ID and Image: ${DOCKER_PATH}"
-            echo "${DOCKER_PASS}" > ./my_password.txt
-            
-            cat ./my_password.txt | docker login --username "${DOCKER_PATH}" --password-stdin
-            docker image tag "capstone-project" "${DOCKER_PATH}/capstone-project"
-            docker image push "${DOCKER_PATH}/capstone-project"
       - run:
           name: eksctl Installation
           command: |
