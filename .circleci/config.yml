@@ -9,11 +9,6 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: setup
-          command: |
-            cd backend
-            make setup
-      - run:
           name: install dependencies
           command: |
             cd backend
