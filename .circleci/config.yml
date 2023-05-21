@@ -3,9 +3,11 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:18.12.0
+      - image: cimg/node:18.12.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: setup
           command: |
@@ -26,3 +28,6 @@ jobs:
           command: |
             cd backend
             make lint
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
