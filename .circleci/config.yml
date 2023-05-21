@@ -1,0 +1,29 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: setup
+          command: |
+            make setup
+      - run:
+          name: install dependencies
+          command: |
+            make install
+      - run:
+          name: run test
+          command: |
+            make test
+      - run:
+          name: run lint
+          command: |
+            make lint
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
