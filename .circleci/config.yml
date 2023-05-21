@@ -36,6 +36,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: yum install -y tar gzip python3
       - attach_workspace:
           at: ~/
       - run:
