@@ -56,10 +56,15 @@ jobs:
             docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
   deploy:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run: yum install -y tar gzip python3 apt
+      - run:
+          name: Install awscli
+          command: |
+            sudo apt-get update -y
+            sudo apt-get install awscli -y
+            yum install -y tar gzip python3 apt
       - attach_workspace:
           at: ~/
       - run:
@@ -74,13 +79,13 @@ jobs:
             # apt update && apt upgrade
             # yum install sudo
             
-            apt-get update
-            apt-get install -y ca-certificates curl
-            apt-get install -y apt-transport-https
-            curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-            echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-            apt-get update
-            apt-get install -y kubectl
+            sudo apt-get update
+            sudo apt-get install -y ca-certificates curl
+            sudo apt-get install -y apt-transport-https
+            sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+            sudo apt-get update
+            sudo apt-get install -y kubectl
       - run:
           name: eksctl create cluster
           command: |
