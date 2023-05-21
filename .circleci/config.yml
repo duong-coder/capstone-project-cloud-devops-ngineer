@@ -50,8 +50,8 @@ jobs:
           command: |
             export DOCKER_PATH=$DOCKER_PATH
 
-            eksctl create cluster --name eksctl-casptone --region=us-east-1 --profile casptone-project
-            kubectl get nodes --profile casptone-project
+            eksctl create cluster --name eksctl-casptone --region=us-east-1
+            kubectl get nodes 
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
             kubectl get deploy,rs,svc,pods
             kubectl port-forward deployment.apps/capstone-project-eks 3001:3000
