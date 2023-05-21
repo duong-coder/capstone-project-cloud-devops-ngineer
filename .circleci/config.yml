@@ -79,14 +79,22 @@ jobs:
             # apt update && apt upgrade
             # yum install sudo
             
-            apt-get update
-            apt-get install -y ca-certificates curl
-            apt-get install -y apt-transport-https
-            mkdir /etc/apt/keyrings
-            curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-            echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-            apt-get update
-            apt-get install -y kubectl
+            # apt-get update
+            # apt-get install -y ca-certificates curl
+            # apt-get install -y apt-transport-https
+            # mkdir /etc/apt/keyrings
+            # curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            # echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+            # apt-get update
+            # apt-get install -y kubectl
+
+            # v2
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+            # chmod +x kubectl
+            # mkdir -p ~/.local/bin
+            # mv ./kubectl ~/.local/bin/kubectl
+            kubectl version --client
       - run:
           name: eksctl create cluster
           command: |
