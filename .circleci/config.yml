@@ -11,18 +11,22 @@ jobs:
       - run:
           name: setup
           command: |
+            cd backend
             make setup
       - run:
           name: install dependencies
           command: |
+            cd backend
             make install
       - run:
           name: run test
           command: |
+            cd backend
             make test
       - run:
           name: run lint
           command: |
+            cd backend
             make lint
       - save_cache:
           paths: [backend/node_modules]
