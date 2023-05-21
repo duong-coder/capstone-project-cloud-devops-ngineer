@@ -56,51 +56,29 @@ jobs:
             docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
   deploy:
     docker:
-      - image: python:3.9.16
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: Install awscli
-          command: |
-            pip3 install awscli
-            apt-get update -y
-            # yum install -y tar gzip
+      - run: yum install -y tar gzip python3
       - attach_workspace:
           at: ~/
       - run:
           name: eksctl Installation
           command: |
-            # curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
             mv /tmp/eksctl /usr/local/bin
       - run:
           name: kubectl Installation
           command: |
-            # apt update && apt upgrade
-            # yum install sudo
-            
-            # apt-get update
-            # apt-get install -y ca-certificates curl
-            # apt-get install -y apt-transport-https
-            # mkdir /etc/apt/keyrings
-            # curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-            # echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-            # apt-get update
-            # apt-get install -y kubectl
-
-            # v2
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-            # chmod +x kubectl
-            # mkdir -p ~/.local/bin
-            # mv ./kubectl ~/.local/bin/kubectl
             kubectl version --client
       - run:
           name: eksctl create cluster
           command: |
             export DOCKER_PATH=$DOCKER_PATH
 
-            # eksctl create cluster --name eksctl-casptone --region=us-east-1
+            eksctl create cluster --name eksctl-casptone --region=us-east-1
             kubectl get nodes 
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
             kubectl get deploy,rs,svc,pods
