@@ -31,28 +31,64 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+  push:
+    docker:
+      - image: cimg/go:1.17
+    steps:
+      - checkout
+      - run:
+          name: Install Docker client
+          command: apk add docker-cli
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run: 
+          name: docker build and push
+          command: |
+            export DOCKER_PATH=$DOCKER_PATH
+
+            docker build --tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" .
+            docker image list
+            
+            echo "Docker ID and Image: ${DOCKER_PATH}"
+            cat $DOCKER_PASS | docker login --username $DOCKER_PATH --password-stdin
+            docker image tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
+            docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
   deploy:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum install -y tar gzip python3
+      - run: yum install -y tar gzip python3 apt
       - attach_workspace:
           at: ~/
       - run:
           name: eksctl Installation
           command: |
             # curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
-            mv /tmp/eksctl /usr/local/bin
+            # curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
+            # mv /tmp/eksctl /usr/local/bin
+      - run:
+          name: kubectl Installation
+          command: |
+            apt update && apt upgrade
+            apt install sudo
+            
+            sudo apt-get update
+            sudo apt-get install -y ca-certificates curl
+            sudo apt-get install -y apt-transport-https
+            sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+            sudo apt-get update
+            sudo apt-get install -y kubectl
       - run:
           name: eksctl create cluster
           command: |
             export DOCKER_PATH=$DOCKER_PATH
 
-            eksctl create cluster --name eksctl-casptone --region=us-east-1
+            # eksctl create cluster --name eksctl-casptone --region=us-east-1
             kubectl get nodes 
-            kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
+            kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
             kubectl get deploy,rs,svc,pods
             kubectl port-forward deployment.apps/capstone-project-eks 3001:3000
 
