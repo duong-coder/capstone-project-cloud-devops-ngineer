@@ -6,8 +6,11 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
+      - run:
+          name: setup
+          command: |
+            cd backend
+            make setup
       - run:
           name: install dependencies
           command: |
@@ -23,6 +26,3 @@ jobs:
           command: |
             cd backend
             make lint
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
