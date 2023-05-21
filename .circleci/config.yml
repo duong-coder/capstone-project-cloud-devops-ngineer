@@ -31,3 +31,46 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+  deploy:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            docker --version
+      - run:
+          name: docker build
+          command: |
+            cd backend
+            docker build --tag capstone-project .
+            docker image list
+      - run:
+          name: docker push
+          command: |
+            export DOCKER_PATH=$DOCKER_PATH
+            export DOCKER_PASS=$DOCKER_PASS
+            echo "Docker ID and Image: ${DOCKER_PATH}"
+            echo "${DOCKER_PASS}" > ./my_password.txt
+            
+            cat ./my_password.txt | docker login --username "${DOCKER_PATH}" --password-stdin
+            docker image tag "capstone-project" "${DOCKER_PATH}/capstone-project"
+            docker image push "${DOCKER_PATH}/capstone-project"
+      - run:
+          name: eksctl Installation
+          command: |
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin
+      - run:
+          name: eksctl create cluster
+          command: |
+            export DOCKER_PATH=$DOCKER_PATH
+
+            eksctl create cluster --name eksctl-casptone --region=us-east-1 --profile casptone-project
+            kubectl get nodes --profile casptone-project
+            kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
+            kubectl get deploy,rs,svc,pods
+            kubectl port-forward deployment.apps/capstone-project-eks 3001:3000
