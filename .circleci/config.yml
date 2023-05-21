@@ -56,15 +56,15 @@ jobs:
             docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
   deploy:
     docker:
-      - image: circleci/node:13.8.0
+      - image: python:3.9.16
     steps:
       - checkout
       - run:
           name: Install awscli
           command: |
-            sudo apt-get update -y
-            sudo apt-get install awscli -y
-            yum install -y tar gzip python3 apt
+            pip3 install awscli
+            apt-get update -y
+            yum install -y tar gzip
       - attach_workspace:
           at: ~/
       - run:
