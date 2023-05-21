@@ -1,3 +1,6 @@
+setup:
+	npm --version
+
 install:
 	npm install
 	# Install hadolint
