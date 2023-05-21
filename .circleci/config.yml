@@ -71,8 +71,8 @@ jobs:
       - run:
           name: kubectl Installation
           command: |
-            apt update && apt upgrade
-            apt install sudo
+            # apt update && apt upgrade
+            yum install sudo
             
             sudo apt-get update
             sudo apt-get install -y ca-certificates curl
