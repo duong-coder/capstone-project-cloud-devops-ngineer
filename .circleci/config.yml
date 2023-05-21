@@ -74,3 +74,9 @@ jobs:
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
             kubectl get deploy,rs,svc,pods
             kubectl port-forward deployment.apps/capstone-project-eks 3001:3000
+
+workflows:
+  default:
+    jobs:
+      - build
+      - deploy
