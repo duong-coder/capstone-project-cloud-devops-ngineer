@@ -79,7 +79,7 @@ jobs:
             export DOCKER_PATH=$DOCKER_PATH
             echo "${DOCKER_PATH}"
 
-            eksctl create cluster --name casptone-project --region=us-east-1
+            eksctl create cluster --name "casptone-project-${CIRCLE_WORKFLOW_ID:0:7}" --region=us-east-1
             kubectl get nodes
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
             kubectl get deploy,rs,svc,pods
