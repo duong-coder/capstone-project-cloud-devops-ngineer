@@ -84,7 +84,7 @@ jobs:
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
             kubectl get deploy,rs,svc,pods
             
-            kubectl wait deployment deployment.apps/capstone-project-eks --for condition=Available=True --timeout=120s 
+            kubectl wait deployment capstone-project-eks --for condition=Available=True --timeout=120s 
             kubectl get deploy,rs,svc,pods
             
             kubectl port-forward deployment.apps/capstone-project-eks --address 0.0.0.0 3001:3000
