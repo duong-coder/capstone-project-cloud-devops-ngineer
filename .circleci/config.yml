@@ -78,8 +78,7 @@ jobs:
           command: |
             export DOCKER_PATH=$DOCKER_PATH
 
-            # eksctl create cluster --name eksctl-casptone --region=us-east-1
-            kubectl delete deploy capstone-project-eks
+            eksctl create cluster --name casptone-project --region=us-east-1
             kubectl get nodes
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
             kubectl get deploy,rs,svc,pods
