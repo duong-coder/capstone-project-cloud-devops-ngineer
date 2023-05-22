@@ -77,12 +77,17 @@ jobs:
           name: eksctl create cluster
           command: |
             export DOCKER_PATH=$DOCKER_PATH
+            echo "${DOCKER_PATH}"
 
             eksctl create cluster --name casptone-project --region=us-east-1
             kubectl get nodes
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project"
             kubectl get deploy,rs,svc,pods
-            kubectl port-forward deployment.apps/capstone-project-eks 3001:3000
+            
+            kubectl wait deployment deployment.apps/capstone-project-eks --for condition=Available=True --timeout=120s 
+            kubectl get deploy,rs,svc,pods
+            
+            kubectl port-forward deployment.apps/capstone-project-eks --address 0.0.0.0 3001:3000
 
 workflows:
   default:
