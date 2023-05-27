@@ -48,12 +48,13 @@ jobs:
           command: |
             cd backend
             export DOCKER_PATH=$DOCKER_PATH
+            export DOCKER_PASS=$DOCKER_PASS
 
             docker build --tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" .
             docker image list
             
             echo "Docker ID and Image: ${DOCKER_PATH}"
-            cat $DOCKER_PASS | docker login --username $DOCKER_PATH --password-stdin
+            cat "${DOCKER_PASS}" | docker login --username "${DOCKER_PATH}" --password-stdin
             docker image tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
             docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
   deploy:
