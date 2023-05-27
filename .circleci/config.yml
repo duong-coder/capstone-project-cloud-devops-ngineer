@@ -100,7 +100,7 @@ workflows:
   default:
     jobs:
       - build
-      - push:
-          requires: [build]
-      - deploy:
-          requires: [push]
+      # - push:
+      #     requires: [build]
+      # - deploy:
+      #     requires: [push]
