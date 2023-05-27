@@ -32,7 +32,7 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
   push:
-    working_directory: /backend
+    working_directory: /app
     docker:
       - image: docker:17.05.0-ce-git
     steps:
@@ -46,7 +46,7 @@ jobs:
       - run: 
           name: docker build and push
           command: |
-            ls
+            cd backend
             export DOCKER_PATH=$DOCKER_PATH
 
             docker build --tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" .
