@@ -32,16 +32,17 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
   push:
+    working_directory: /backend
     docker:
-      - image: cimg/go:1.17
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
+      - setup_remote_docker
       - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
+          name: Install dependencies
+          command: |
+            apk add --no-cache py-pip=9.0.0-r1
+            pip install docker-compose==1.12.0 awscli==1.11.76
       - run: 
           name: docker build and push
           command: |
@@ -99,5 +100,5 @@ workflows:
       - build
       - push:
           requires: [build]
-      - deploy:
-          requires: [push]
+      # - deploy:
+      #     requires: [push]
