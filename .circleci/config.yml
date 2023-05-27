@@ -102,5 +102,5 @@ workflows:
       - build
       - push:
           requires: [build]
-      # - deploy:
-      #     requires: [push]
+      - deploy:
+          requires: [push]
