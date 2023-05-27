@@ -32,7 +32,7 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
   push:
-    working_directory: /
+    working_directory: /backend
     docker:
       - image: docker:17.05.0-ce-git
     steps:
