@@ -1,5 +1,9 @@
 # Url app
 http://a932f652adc2d49afa6d5a39d66aa12e-1792238619.us-east-1.elb.amazonaws.com:3000/
+# Github
+https://github.com/duong-coder/capstone-project-cloud-devops-ngineer
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/duong-coder/capstone-project-cloud-devops-ngineer/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/duong-coder/capstone-project-cloud-devops-ngineer/tree/master)
 
 # Propose and Scope the Project
 1. My pipeline
